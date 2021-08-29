@@ -95,16 +95,16 @@ for i = 1 : 2*length(filePaths)
     
     
     % calculate PSNR and SSIM
-    %[PSNRCur, SSIMCur] = Cal_PSNRSSIM(label,im2uint8(output),0,0);
-    %if showresult
-    %    imshow(cat(2,im2uint8(input),im2uint8(label),im2uint8(output)));
-    %    title([filePaths(ii).name,'    ',num2str(PSNRCur,'%2.2f'),'dB','    ',num2str(SSIMCur,'%2.4f')])
-    %    imwrite(im2uint8(output), fullfile(folderResultCur, [nameCur, '_' int2str(noiseSigma),'_PSNR_',num2str(PSNRCur*100,'%4.0f'), extCur] ));
-    %    drawnow;
-    %   pause(1)
-    %end
-    %PSNRs(ii) = PSNRCur;
-    %SSIMs(ii) = SSIMCur;
+    [PSNRCur, SSIMCur] = Cal_PSNRSSIM(label,im2uint8(output),0,0);
+    if showresult
+        imshow(cat(2,im2uint8(input),im2uint8(label),im2uint8(output)));
+        title([filePaths(ii).name,'    ',num2str(PSNRCur,'%2.2f'),'dB','    ',num2str(SSIMCur,'%2.4f')])
+        imwrite(im2uint8(output), fullfile(folderResultCur, [nameCur, '_' int2str(noiseSigma),'_PSNR_',num2str(PSNRCur*100,'%4.0f'), extCur] ));
+        drawnow;
+       pause(1)
+    end
+    PSNRs(ii) = PSNRCur;
+    SSIMs(ii) = SSIMCur;
 end
 
 
