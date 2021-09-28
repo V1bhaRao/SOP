@@ -25,18 +25,19 @@ Demo_Test_FracDCNN_DAG.m- takes the test folder “testsets”. Here, the “lab
 
 
 Steps Followed :-
-The steps mentioned in section 4 “Experiments” from the FOCNet paper are followed.
-1.  	Clean images from the Berkeley Segmentation Dataset (https://www2.eecs.berkeley.edu/Research/Projects/CS/vision/bsds/) were downloaded. This contains a BSDS300 dataset including a training and testing folder.
-2.  	matconvnet-1.0-beta25 package was downloaded (https://www.vlfeat.org/matconvnet/). This is a MATLAB Toolbox for implementation of Convolutional Neural Networks (CNNs) for computer vision purposes.
-3.  	MATLAB (R2021a) environment was used on the PC to run the code.
-4.  	A compiler with C++ support like Visual Studio 2015 or a newer version should be downloaded.
-5.  	Check out https://www.vlfeat.org/matconvnet/install/ if any issues are faced during compilation.
-6.  	In vl_compilenn, the path of cl.exe should be changed to the one present in your version of Microsoft Visual Studio. 
-7.  	Configure MATLAB to use the compiler. Before running vl_compilenn, setup mex using the following commands:
+The steps mentioned in section 4 “Experiments” from the FOCNet paper are followed.  
+
+1. Clean images from the Berkeley Segmentation Dataset (https://www2.eecs.berkeley.edu/Research/Projects/CS/vision/bsds/) were downloaded. This contains a BSDS300 dataset including a training and testing folder.
+2. matconvnet-1.0-beta25 package was downloaded (https://www.vlfeat.org/matconvnet/). This is a MATLAB Toolbox for implementation of Convolutional Neural Networks (CNNs) for computer vision purposes.
+3. MATLAB (R2021a) environment was used on the PC to run the code.
+4. A compiler with C++ support like Visual Studio 2015 or a newer version should be downloaded.
+5. Check out https://www.vlfeat.org/matconvnet/install/ if any issues are faced during compilation.
+6. In vl_compilenn, the path of cl.exe should be changed to the one present in your version of Microsoft Visual Studio. 
+7. Configure MATLAB to use the compiler. Before running vl_compilenn, setup mex using the following commands:
 mex –setup                                  (and)
 mex –setup C++
-8.  	After vl_compilenn and vl_setupnn execute successfully, run Demo_train_fracDCNN_DAG.m. For each noise level (sigma) this creates a folder and the trained epochs (.mat type) are stored within it.
-9.  	Finally, run Demo_test_fracDCNN_DAG.m. This evaluates the denoising performance of FOCNet. It also calculates PSNR and SSIM values for each image and displays their mean. The resulting denoised output images are stored in the “results” folder.
+8. After vl_compilenn and vl_setupnn execute successfully, run Demo_train_fracDCNN_DAG.m. For each noise level (sigma) this creates a folder and the trained epochs (.mat type) are stored within it.
+9. Finally, run Demo_test_fracDCNN_DAG.m. This evaluates the denoising performance of FOCNet. It also calculates PSNR and SSIM values for each image and displays their mean. The resulting denoised output images are stored in the “results” folder.
 Changes made to the code:-
 ·        In generatepatches.m – Change line 7 to the name of your training set. Ensure that this dataset is present inside the folder “utilities”.
 ·        In Demo_test_fracDCNN_DAG.m- Change line 10 such that setTestCur holds the name of the testing test required. Ensure that this set is present inside a folder “testsets”. The current model is saved in data/model. So, uncomment line 25 and comment line 28.
