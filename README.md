@@ -50,6 +50,6 @@ Presently, the FOCNet code takes a single image and adds noise to it to form the
 
 In Demo_test_fracDCNN_DAG.m- In line 10, initialize setTestCur with the name of the folder having noisy images for testing. Change line 83 to input = im2single(label)so that extra noise isn’t added to it. Comment out the lines involving PSNR and SSIM as these are required only to compare the output and reference image.
 
-In generatepatches.m- imdb.labels2 is created similar to imdb.labels. For training, pairs consisting of clean and noisy images are required. The corresponding images can be stored in 2 separate folders which can be handled by labels and labels2.
+In FracDCNN_train_dag.m- In the function getDagNNBatch, the new kind of noise (to introduce discontinuous ridges) can be added directly and trained.
 
-In FracDCNN_train_dag.m- In the function getDagNNBatch, initialize “input” similar to how “label” is initialized but with imdb.labels2. The switch case for ‘Denoising’ can be commented out.
+Code was also added to save the loss values of images for each epoch during training inside an excel file.
