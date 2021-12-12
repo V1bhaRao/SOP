@@ -219,6 +219,7 @@ stats.num = 0 ; % return something even if subset = []
 stats.time = 0 ;
 count = 0;
 %start = tic ;
+errorArray = {};
 for t=1:params.batchSize:numel(subset)
     %     fprintf('%s: epoch %02d: %3d/%3d:', mode, epoch, ...
     %         fix((t-1)/params.batchSize)+1, ceil(numel(subset)/params.batchSize)) ;
@@ -271,12 +272,16 @@ for t=1:params.batchSize:numel(subset)
     
     %%%--------------------------------------------------
     loss2 = squeeze(gather(net.vars(net.getVarIndex(params.derOutputs{1})).value));
-   
+    errorArray = [errorArray,loss2];
     fprintf('%s: epoch %02d : %3d/%3d:', mode, epoch,  ...
         fix((t-1)/params.batchSize)+1, ceil(numel(subset)/params.batchSize)) ;
     fprintf('error: %f \n', loss2) ;
     
 end
+errorArray = errorArray';
+filename = "ErrorData.xlsx";
+
+writecell(errorArray,filename,'Sheet',1,'Range','D1');
 
 % Save back to state.
 state.stats.(mode) = stats ;
@@ -539,18 +544,61 @@ function [inputs2] = getDagNNBatch(imdb, batch,noiselevel)
 global CurTask;
 label      = imdb.labels(:,:,:,batch);
 label      = data_augmentation(label,randi(8));
-input = imdb.labels2(:,:,:,batch);
-input = data_augmentation(input,randi(8));
-%switch CurTask
-%    case 'Denoising'
-%        input      = label + noiselevel/255*randn(size(label),'single');  % add AWGN with noise level noiselevel
-%    case 'SISR'
-%        for ii = 1:numel(batch)
-%            input(:,:,:,ii) = imresize(imresize(label(:,:,:,ii), 1/noiselevel,'bicubic'), noiselevel, 'bicubic');
-%        end
-%end
-input      = gpuArray(input);
-label      = gpuArray(label);
+
+% adding noise
+image_th = uint8(zeros(size(label)));
+for x=155 %initialise change in pixel value
+          pixel=label(:,:);
+          pixel=pixel+x;
+          % check pixel value and assign new value
+         if pixel>255
+              pixel=min(pixel,x);
+           else
+            pixel = pixel;
+         end
+          % save new pixel value in thresholded image
+          image_th(:,:)=pixel;
+         
+          A=uint8(255*(mat2gray(image_th)));
+end
+
+A = single (A);
+switch CurTask
+    case 'Denoising'
+       % input      = label + noiselevel/255*randn(size(label),'single');  % add AWGN with noise level noiselevel
+       input = A;
+    case 'SISR'
+        for ii = 1:numel(batch)
+            input(:,:,:,ii) = imresize(imresize(label(:,:,:,ii), 1/noiselevel,'bicubic'), noiselevel, 'bicubic');
+        end
+end
+%input      = gpuArray(input);
+%label      = gpuArray(label);
 inputs2    = {'input', input, 'label', label} ;
 
+function CELL = convert(ROW,COL)
+%% Returns the column characters of Excel given a certain column number
+% Input COL : number of column
+% Output CHAR : Character combination in Excel
+    if COL <= 26                        % [A..Z]
+        CHAR = char(mod(COL-1,26)+1+64);
+        CELL = [CHAR num2str(ROW)];
+    elseif COL <= 702                   % [AA..ZZ]
+        COL = COL-26;    
+        CHAR1 = char(floor((COL-1)/26)+1+64);
+        CHAR0 = char(mod(COL-1,26)+1+64);
+        CHAR = [CHAR1 CHAR0];
+        CELL = [CHAR num2str(ROW)];
+    elseif COL <= 16384                 % [AAA..XFD]
+        COL = COL-702; 
+        CHAR2 = char(floor((COL-1)/676)+1+64);
+        COL=COL-(floor((COL-1)/676))*676;
+        CHAR1 = char(floor((COL-1)/26)+1+64);
+        CHAR0 = char(mod(COL-1,26)+1+64);
+        CHAR = [CHAR2 CHAR1 CHAR0];
+        CELL = [CHAR num2str(ROW)];
+    else
+        disp('Column does not exist in Excel!');
+    end
+end
 
